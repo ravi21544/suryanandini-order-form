@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title>Suryanandini Order Form</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f7f2;
+    padding: 20px;
+    margin: 0;
+  }
+  .form-box {
+    max-width: 950px;
+    margin: auto;
+    background: #fffefc;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+  }
+  .form-box:hover { transform: scale(1.01); }
+  h2 { text-align: center; color: #2d5d3b; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+  th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+  input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: 0.2s;
+  }
+  input[type="number"]:focus { border-color: #2d5d3b; box-shadow: 0 0 5px #2d5d3b33; }
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top:5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    transition: 0.2s;
+  }
+  input:focus, textarea:focus { border-color: #2d5d3b; box-shadow: 0 0 5px #2d5d3b33; }
+  button {
+    width: 100%;
+    padding: 15px;
+    background: #25D366;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover { background: #1ebe5c; }
+  .total-row { font-weight: bold; font-size: 16px; color: #2d5d3b; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+
+<div class="form-box">
+  <h2>Suryanandini Order Form</h2>
+
+  <table id="productTable">
+    <tr><th>Product</th><th>Price (₹)</th><th>Qty</th><th>Subtotal (₹)</th></tr>
+  </table>
+
+  <p class="total-row">Grand Total: ₹<span id="grandTotal">0</span></p>
+
+  <label>पूरा नाम:</label>
+  <input type="text" id="name" placeholder="आपका नाम" required>
+
+  <label>पता:</label>
+  <textarea id="address" rows="2" placeholder="आपका पता" required></textarea>
+
+  <label>पिन कोड:</label>
+  <input type="text" id="pincode" placeholder="पिन कोड" required>
+
+  <label>मोबाइल नंबर:</label>
+  <input type="text" id="mobile" placeholder="जैसे 9812345678" required>
+
+  <button onclick="sendOrder()">WhatsApp पर भेजें</button>
+</div>
+
+<script>
+  let productsList = [
+    { name: "Multani Mitti Panchgavya Skin Purifier 100 Gm", price: 200 },
+    { name: "Musli Pak 500 Gm", price: 1200 },
+    { name: "Pure Saffron 1 Gm", price: 230 },
+    { name: "Rog Nasak Chai (Tea) 150 Gm", price: 170 },
+    { name: "Pure Turmeric (Haldi) 250 Gm", price: 130 },
+    { name: "Eye Drops", price: 150 },
+    { name: "Cold Pressed Coconut Oil 500 Ml", price: 340 },
+    { name: "allergy oil", price: 170 },
+    { name: "chyawanprash", price: 1200 },
+    { name: "Face Pack Powder", price: 120 },
+    { name: "Hair Growth Oil 120Ml", price: 170 },
+    { name: "Sukshm Hawan Kund 15 Pic", price: 180 },
+    { name: "Cow Bilona Ghee 1 Liter", price: 1950 },
+    { name: "Multani Mitti Allergy Soap 4 pic+Allergy Oil kit", price: 350 },
+    { name: "Face,Hair,Alrji,Panchgav Mix 8 Shop", price: 420 },
+    { name: "Dantmanjan", price: 160 },
+    { name: "Coconut Oil 120 Ml", price: 60 },
+    { name: "नीम एंजाइम 150 Ml", price: 100 },
+    { name: "हल्दी एंजाइम 150", price: 150 },
+    { name: "Dhoop", price: 50 },
+    { name: "Gulab Jal", price: 110 },
+    { name: "आर्गेनिक बिस्कुट 500 Gm", price: 250 },
+    { name: "तिल बर्फी 500 GM", price: 230 },
+    { name: "Ashwagandha Pak 500 Gm", price: 880 },
+    { name: "Hair Oil 200 Ml", price: 280 },
+    { name: "Adhbhout  Ghee", price: 110 },
+    { name: "सौंफ कैंडी", price: 130 },
+    { name: "औषधि कफ कैंडी", price: 130 },
+    { name: "औषधि गुलकंद कैंडी", price: 130 },
+    { name: "Amla Triphala Amrit Extract", price: 190 },
+    { name: "कांतिमय उबटन बादाम, अखरोट से बना साबुन 100 Gm", price: 80 },
+    { name: "आंवला एंजाइम", price: 110 },
+    { name: "Multani Mitti Hair Soap pack of 4", price: 220 },
+    { name: "100 Sabun Mix 25 Per Soap Face,Hair,Skin Or Panchgavya Soap", price: 3300 },
+    { name: "मच्छर गायब", price: 130 },
+    { name: "Pure Bhim Saini Kapoor", price: 130 },
+    { name: "मुल्तानी मिट्टी हैंड वाश", price: 100 },
+    { name: "Kumkumadi Telam", price: 650 },
+    { name: "Coconut Kandi", price: 130 },
+    { name: "Organic Gulkand", price: 220 },
+    { name: "Face Body Ubtan 200 Gm", price: 250 },
+    { name: "Bamboo Toothbrush 1 Pic", price: 45 },
+    { name: "Neem Comb", price: 70 },
+    { name: "celery honey", price: 270 },
+    { name: "Pure Shilajit 30 Gm", price: 650 },
+    { name: "Multani Mitti Face Ubtan Pack 4 Pic", price: 240 },
+    { name: "Manjan 2 pics + 1 Toothbrush", price: 380 },
+    { name: "Multani Mitti Allergy Soap Pack 4 Pic", price: 240 },
+    { name: "Multani Mitti Allergy Soap Pack 100 Pic", price: 3200 },
+    { name: "Natural Sugar 1-kg", price: 150 },
+    { name: "Hardh Organic गुड़ की गोलियां 200gm", price: 100 },
+    { name: "Jangli kadipaata (जंगली कड़ीपता) 50gm", price: 70 },
+    { name: "Multani mitti Natural- Hand Wash 200 ml", price: 150 },
+    { name: "Multani mitti Natural Shampoo", price: 200 }
+  ];
+
+  let table = document.getElementById("productTable");
+
+  productsList.forEach((p,index)=>{
+    let row = table.insertRow();
+    row.insertCell(0).innerText = p.name;
+    row.insertCell(1).innerText = p.price;
+    let qtyCell = row.insertCell(2);
+    let input = document.createElement("input");
+    input.type = "number";
+    input.min = "0";
+    input.value = "0";
+    input.id = "p"+index;
+    qtyCell.appendChild(input);
+    let subCell = row.insertCell(3);
+    subCell.innerText = "0";
+    input.addEventListener("input",()=>{
+      let qty = parseInt(input.value)||0;
+      let subtotal = qty * p.price;
+      subCell.innerText = subtotal;
+      updateGrandTotal();
+    });
+  });
+
+  function updateGrandTotal(){
+    let total=0;
+    productsList.forEach((p,index)=>{
+      let qty = parseInt(document.getElementById("p"+index).value)||0;
+      total += qty * p.price;
+    });
+    document.getElementById("grandTotal").innerText = total;
+  }
+
+  function sendOrder(){
+    let products="";
+    productsList.forEach((p,index)=>{
+      let qty = parseInt(document.getElementById("p"+index).value)||0;
+      if(qty>0){
+        products += `${p.name} (₹${p.price}) x ${qty}%0A`;
+      }
+    });
+    if(!products){
+      alert("कृपया कम से कम एक प्रोडक्ट चुनें!");
+      return;
+    }
+    let name = document.getElementById("name").value;
+    let address = document.getElementById("address").value;
+    let pincode = document.getElementById("pincode").value;
+    let mobile = document.getElementById("mobile").value;
+
+    let msg = `🛒 नया ऑर्डर:%0A%0A${products}%0A👤 नाम: ${name}%0A🏠 पता: ${address}%0A📮 पिन कोड: ${pincode}%0A📱 मोबाइल: ${mobile}%0A💰 कुल: ₹${document.getElementById("grandTotal").innerText}`;
+
+    let phone = "919306321544"; // आपका WhatsApp नंबर
+    window.open(`https://wa.me/${phone}?text=${msg}`,"_blank");
+  }
+</script>
